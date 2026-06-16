@@ -1,0 +1,12 @@
+sources:
+  - id: index
+    name: Index.hr
+    feed_url: https://www.index.hr/rss
+
+  - id: jutarnji
+    name: Jutarnji.hr
+    feed_url: https://www.jutarnji.hr/rss
+
+  - id: 24sata
+    name: 24sata.hr
+    feed_url: https://www.24sata.hr/rss
