@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb_local
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./docker/dynamodb:/home/dynamodblocal/data
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
+
+
+  ganache-cli:
+    image: trufflesuite/ganache-cli:latest
+    container_name: ganache_blockchain
+    ports:
+      - "8545:8545"
+    command: ["-d", "-m", "test manual core identity simple carbon window use logic visual quality match"]

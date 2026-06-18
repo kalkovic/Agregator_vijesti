@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     )
 
     log_level: str = "INFO"
+    similarity_threshold: float = 0.3
+
 
     host: str = Field(default="0.0.0.0", validation_alias="NEWS_SERVICE_HOST")
     port: int = Field(default=8000, validation_alias="NEWS_SERVICE_PORT")
