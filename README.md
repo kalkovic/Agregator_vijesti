@@ -182,6 +182,11 @@ Kopirajte `.env.example` u `.env` i prilagodite vrijednosti po potrebi.
 
 ---
 
+### Blockchain Layer (Ganache & Smart Contract)
+Prije pokretanja API-ja, potrebno je podignuti lokalnu Ethereum mrežu i deployati ugovor. 
+Detaljne upute nalaze se u [Blockchain dokumentaciji](./blockchain/README.md).
+
+---
 ## 🔌 API (planirano)
 
 ### News Service
