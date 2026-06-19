@@ -1,0 +1,101 @@
+{
+    "contract_address": "0xEbA21Ea99Da596F8B194EDd04686B008c07853Cb",
+    "abi": [
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "eventId",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "contentHash",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "timestamp",
+                    "type": "uint256"
+                }
+            ],
+            "name": "NewsStored",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "name": "events",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "eventId",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "contentHash",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "timestamp",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "author",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "_eventId",
+                    "type": "string"
+                }
+            ],
+            "name": "getEventHash",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "_eventId",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "_contentHash",
+                    "type": "string"
+                }
+            ],
+            "name": "storeEvent",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ]
+}
