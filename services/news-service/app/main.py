@@ -11,6 +11,10 @@ from app.config import settings
 from app.db.repository import get_all_active_events, save_events_and_articles, get_event_by_id
 from app.services.aggregator import EventAggregator
 
+from .security import get_current_user, require_admin
+from fastapi import Depends
+from pydantic import BaseModel
+
 app = FastAPI(title="News Aggregator - News Service")
 
 app.add_middleware(
@@ -26,6 +30,10 @@ RSS_SOURCES = {
     "jutarnji": "https://www.jutarnji.hr/rss",
     "24sata": "https://www.24sata.hr/feeds/najnovije.xml"
 }
+
+class NewsSchema(BaseModel):
+    title: str
+    content: str | None = None
 
 async def run_core_pipeline():
 
@@ -168,3 +176,11 @@ def verify_event_integrity(event_id: str):
         raise HTTPException(status_code=404, detail=verification_result.get("message"))
         
     return verification_result
+
+@app.post("/news")
+def create_news(news: NewsSchema, current_user: dict = Depends(get_current_user)):
+    return {"message": "Vijest stvorena", "user": current_user["email"]}
+
+@app.delete("/news/{news_id}")
+def delete_news(news_id: int, current_user: dict = Depends(require_admin)):
+    return {"message": f"Vijest {news_id} obrisana od strane admina {current_user['email']}"}
