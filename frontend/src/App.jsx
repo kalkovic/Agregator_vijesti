@@ -1,48 +1,47 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+
 import Header from './components/Header';
 import Footer from './components/Footer';
 
+import EventListPage from './pages/EventListPage';
+import EventDetailPage from './pages/EventDetailPage';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import AuthPage from './pages/AuthPage';
+
 function App() {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/events')
-      .then(response => {
-        setEvents(response.data);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Greška pri dohvaćanju događaja:", error);
-        setLoading(false);
-      });
-  }, []);
-
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header />
-      <main className="flex-grow container mx-auto p-4 mt-6">
-        <h2 className="text-2xl font-bold mb-6 text-slate-800">Agregirani događaji</h2>
+    <Router>
+      <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
         
-        {loading ? (
-          <p>Učitavanje...</p>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <div key={event.id} className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-                <h3 className="font-semibold text-lg mb-2">{event.title}</h3>
-                <p className="text-sm text-blue-600 mb-2">{event.category}</p>
-                <div className="text-xs text-slate-400 font-mono bg-slate-100 p-2 rounded truncate">
-                  ID: {event.id}
-                </div>
-              </div>
-            ))}
+        <nav className="bg-slate-900 text-white px-6 py-4 shadow-md flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Link to="/" className="text-xl font-black tracking-tight hover:text-indigo-400 transition-colors">
+              News Registry App
+            </Link>
           </div>
-        )}
-      </main>
-      <Footer />
-    </div>
+          
+          <div className="flex items-center space-x-6 font-semibold text-sm">
+            <Link to="/" className="hover:text-indigo-400 transition-colors">Vijesti</Link>
+            <Link to="/analytics" className="hover:text-indigo-400 transition-colors">Analitika</Link>
+            <Link to="/auth" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
+              Prijava
+            </Link>
+          </div>
+        </nav>
+
+        <main className="flex-grow container mx-auto p-4 mt-6 max-w-7xl w-full">
+          <Routes>
+            <Route path="/" element={<EventListPage />} />
+            <Route path="/event/:id" element={<EventDetailPage />} />
+            <Route path="/analytics" element={<AnalyticsDashboard />} />
+            <Route path="/auth" element={<AuthPage />} />
+          </Routes>
+        </main>
+        
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
