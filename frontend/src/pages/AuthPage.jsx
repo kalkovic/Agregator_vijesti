@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -6,9 +7,49 @@ function AuthPage() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const API_URL = import.meta.env.VITE_AUTH_API_URL;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Ovo je demo simulacija za: ${isLogin ? 'Prijava' : 'Registracija'} sa emailom: ${email}`);
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const response = await axios.post(`${API_URL}/api/auth/login`, {
+          email: email,
+          password: password
+        });
+
+        const token = response.data.access_token;
+        localStorage.setItem('token', token);
+        
+        setSuccess('Prijava uspješna! Token je spremljen.');
+        
+        
+      } else {
+        await axios.post(`${API_URL}/api/auth/register`, {
+          email: email,
+          password: password,
+          full_name: name
+        });
+
+        setSuccess('Uspješno ste se registrirali! Sada se možete prijaviti.');
+        setIsLogin(true); 
+        setPassword(''); 
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.detail || 'Došlo je do greške prilikom spajanja na server.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,6 +62,18 @@ function AuthPage() {
           {isLogin ? 'Prijavite se za pristup administratorskim rutama' : 'Registrirajte novi administratorski profil'}
         </p>
 
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 text-center">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-lg border border-green-100 text-center">
+            {success}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
@@ -31,7 +84,7 @@ function AuthPage() {
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-slate-800 text-sm"
                 placeholder="Ivan Horvat"
-                required
+                required={!isLogin}
               />
             </div>
           )}
@@ -62,9 +115,12 @@ function AuthPage() {
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition-colors text-sm mt-2"
+            disabled={loading}
+            className={`w-full text-white font-bold py-2 rounded-lg transition-colors text-sm mt-2 ${
+              loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
+            }`}
           >
-            {isLogin ? 'Prijavi se' : 'Registriraj se'}
+            {loading ? 'Obrada...' : (isLogin ? 'Prijavi se' : 'Registriraj se')}
           </button>
         </form>
 
@@ -75,7 +131,11 @@ function AuthPage() {
             {isLogin ? 'Nemate račun?' : 'Već imate račun?'}
           </span>{' '}
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setError('');
+              setSuccess('');
+            }}
             className="text-indigo-600 hover:underline font-bold"
           >
             {isLogin ? 'Registriraj se' : 'Prijavi se'}
