@@ -16,11 +16,11 @@ class Settings(BaseSettings):
     host: str = Field(default="0.0.0.0", validation_alias="NEWS_SERVICE_HOST")
     port: int = Field(default=8000, validation_alias="NEWS_SERVICE_PORT")
 
-    dynamodb_endpoint: str = "http://localhost:8001"
+    dynamodb_endpoint: str = Field(default="http://dynamodb-local:8000", validation_alias="DYNAMODB_URL")
     dynamodb_region: str = "eu-central-1"
     dynamodb_events_table: str = "news-events"
-    aws_access_key_id: str = "local"
-    aws_secret_access_key: str = "local"
+    aws_access_key_id: str = Field(default="akiahubnews2026local", validation_alias="AWS_ACCESS_KEY_ID")
+    aws_secret_access_key: str = Field(default="secretaccesskeyhubnews2026local", validation_alias="AWS_SECRET_ACCESS_KEY")
 
     rss_feeds: str = (
         "https://www.index.hr/rss,"
@@ -28,7 +28,7 @@ class Settings(BaseSettings):
         "https://www.24sata.hr/rss"
     )
 
-    ganache_url: str = "http://localhost:8545"
+    ganache_url: str = Field(default="http://ganache-cli:8545", validation_alias="WEB3_PROVIDER_URL")
     contract_address: str = ""
     private_key: str = ""
 

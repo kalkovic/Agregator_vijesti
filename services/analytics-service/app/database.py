@@ -3,7 +3,7 @@ from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource(
     'dynamodb', 
-    endpoint_url='http://localhost:8001',  
+    endpoint_url='http://localhost:8000',  
     region_name='eu-central-1',            
     aws_access_key_id='test',              
     aws_secret_access_key='test'

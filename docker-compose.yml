@@ -5,11 +5,12 @@ services:
     image: amazon/dynamodb-local:latest
     container_name: dynamodb_local
     ports:
-      - "8001:8000"
+      - "8001:8000" 
     volumes:
       - ./docker/dynamodb:/home/dynamodblocal/data
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
-
+    networks:
+      - aggregator-network
 
   ganache-cli:
     image: trufflesuite/ganache-cli:latest
@@ -17,3 +18,99 @@ services:
     ports:
       - "8545:8545"
     command: ["-d", "-m", "test manual core identity simple carbon window use logic visual quality match"]
+    networks:
+      - aggregator-network
+
+  init-setup:
+    build:
+      context: ./scripts
+      dockerfile: Dockerfile
+    container_name: init_setup
+    environment:
+      - PYTHONUNBUFFERED=1
+      - AWS_ACCESS_KEY_ID=akiahubnews2026local
+      - AWS_SECRET_ACCESS_KEY=secretaccesskeyhubnews2026local
+      - AWS_DEFAULT_REGION=eu-central-1
+      - DYNAMODB_URL=http://dynamodb-local:8000
+      - WEB3_PROVIDER_URL=http://ganache-cli:8545
+    depends_on:
+      - dynamodb-local
+      - ganache-cli
+    volumes:
+      - ./blockchain:/blockchain
+    networks:
+      - aggregator-network
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "8081:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=akiahubnews2026local
+      - AWS_SECRET_ACCESS_KEY=secretaccesskeyhubnews2026local
+      - AWS_DEFAULT_REGION=eu-central-1
+      - DYNAMODB_URL=http://dynamodb-local:8000 
+      - JWT_SECRET=tvoj_super_tajni_kljuc_za_diplomski
+    depends_on:
+      - dynamodb-local
+    networks:
+      - aggregator-network
+
+  news-service:
+    build:
+      context: ./services/news-service
+      dockerfile: Dockerfile
+    container_name: news-service
+    ports:
+      - "8080:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=akiahubnews2026local
+      - AWS_SECRET_ACCESS_KEY=secretaccesskeyhubnews2026local
+      - AWS_DEFAULT_REGION=eu-central-1
+      - DYNAMODB_URL=http://dynamodb-local:8000
+      - WEB3_PROVIDER_URL=http://ganache-cli:8545
+    depends_on:
+      - dynamodb-local
+      - ganache-cli
+    volumes:
+      - ./blockchain:/blockchain
+    networks:
+      - aggregator-network
+
+  analytics-service:
+    build:
+      context: ./services/analytics-service
+      dockerfile: Dockerfile
+    container_name: analytics-service
+    ports:
+      - "8082:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=akiahubnews2026local
+      - AWS_SECRET_ACCESS_KEY=secretaccesskeyhubnews2026local
+      - AWS_DEFAULT_REGION=eu-central-1
+      - DYNAMODB_URL=http://dynamodb-local:8000
+    depends_on:
+      - dynamodb-local
+    networks:
+      - aggregator-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: news_frontend
+    ports:
+      - "3000:80" 
+    depends_on:
+      - auth-service
+      - news-service
+      - analytics-service
+    networks:
+      - aggregator-network
+
+networks:
+  aggregator-network:
+    driver: bridge

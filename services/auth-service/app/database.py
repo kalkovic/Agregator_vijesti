@@ -1,15 +1,16 @@
+import os
 import boto3
 from botocore.exceptions import ClientError
 
-DYNAMODB_URL = "http://localhost:8001"
-REGION = "eu-central-1"
+DYNAMODB_URL = os.getenv("DYNAMODB_URL", "http://dynamodb-local:8000")
+REGION = os.getenv("AWS_DEFAULT_REGION", "eu-central-1")
 
 dynamodb = boto3.resource(
     'dynamodb',
     endpoint_url=DYNAMODB_URL,
     region_name=REGION,
-    aws_access_key_id='test',
-    aws_secret_access_key='test'
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID", "test"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY", "test")
 )
 
 def create_users_table():
